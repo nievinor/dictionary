@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <form method="post" enctype="multipart/form-data" th:action="dictionary_upload">
+        <input name="file" type="file">
+        <button type="submit">Добавить</button>
+    </form>
+</div>
+
+<div>
+    <form method="post" th:action="dictionary_search">
+        <input type="text" name="search">
+        <button type="submit">Найти</button>
+    </form>
+</div>
+
+<div th:if="${dictionary != null}">
+    <tr th:each="entry : ${dictionary}">
+        <td th:text="${entry.key}"></td>
+        <td th:text="${entry.value}"></td>
+    </tr>
+</div>
+
+</body>
+</html>
