@@ -55,24 +55,38 @@ public class DictionaryController {
             model.addAttribute("message", "словарь загружен");
         }
 
+        //Map использую для передачи результата, где ключ это выражение, а значение - оценка
+        Map<String, Integer> result = search(check);
+        model.addAttribute("dictionary", result);
+        
+        return "greeting";
+    }
+
+    private Map<String, Integer> search(String check) {
+        //Map использую для хранения оценки для выражения и того, чтобы была связь между оценкой и выражение в словаре по индексу
         Map<Integer, Integer> markMap = new HashMap<>();
 
+        //Инициализация словаря оценок нулевыми оценками
         for (int i = 0; i < dictionary.size(); i++) {
             markMap.put(i, 0);
         }
 
+        //Проверяемое выражение переношу в массив, чтобы проверить на вхождение каждое слово в выражении. Используется ArrayList, так как get по индексу дает сложность O(1)
         List<String> checkArr = Arrays.asList(check.split(" "));
 
+        //Цикл по выражениям словаря для анализа
         for (String str : dictionary) {
-            String[] arrayStrDictionary = str.split(" ");
-            List<String> copyArray = new ArrayList<>(checkArr);
 
+            //Разбиваю каждую строку из словаря для последующей проверки на вхождения слова в проверяемое выражение
+            String[] arrayStrDictionary = str.split(" ");
+
+            //считываем номер индекса для последующего выставления оценки
             int pos = dictionary.indexOf(str);
 
+            //цикл для проверки вхождения 1 слова в словарь
             for (String s :arrayStrDictionary) {
                 for (String checkStr : checkArr) {
                     if (s.equals(checkStr)) {
-//                        int pos = dictionary.indexOf(str);
                         int mark = markMap.get(pos);
                         mark += 2;
                         markMap.put(pos, mark);
@@ -80,6 +94,10 @@ public class DictionaryController {
                 }
             }
 
+            //Копирую коллекцию провряемого выражения для проверки вхождения нескольких слов по порядку. Используется arrayList, т.к. get по индексу и удаление с конца коллекции имеет сложность О(1)
+            List<String> copyArray = new ArrayList<>(checkArr);
+
+            //цикл для проверки нескольких слов в словарь. Начинаю проверять все выражение и удаляю последнее слово, для сокращения вырадения проверки
             for (int i = copyArray.size(); i >= 0 ; i--) {
                 String checkStr = String.join(" ", copyArray);
                 if (str.contains(checkStr)) {
@@ -91,30 +109,23 @@ public class DictionaryController {
                     copyArray.remove(copyArray.size() - 1);
                     if (copyArray.size() == 1) break;
                 }
-
             }
-
         }
 
-        Map<Integer, Integer> collect = markMap.entrySet().stream()
+        //накладываю отбор и сортирую map с оценками и связью с выражением
+        markMap = markMap.entrySet().stream()
                 .filter(mapEntry -> mapEntry.getValue() > 0)
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+//        создаю результирующую map где указано выражение и оценка для него
         Map<String, Integer> result = new HashMap<>();
 
         for (Map.Entry<Integer, Integer> entry :
-                collect.entrySet()) {
+                markMap.entrySet()) {
             result.put(dictionary.get(entry.getKey()), entry.getValue());
         }
-
-        model.addAttribute("dictionary", result);
-        
-        return "greeting";
+        return result;
     }
-
-//    private Map<String, Integer> search() {
-//
-//    }
 
 }
