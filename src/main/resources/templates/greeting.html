@@ -10,6 +10,7 @@
         <input name="file" type="file">
         <button type="submit">Добавить</button>
     </form>
+    <div th:if="${message != null}" th:text="${message}"></div>
 </div>
 
 <div>
@@ -20,10 +21,20 @@
 </div>
 
 <div th:if="${dictionary != null}">
-    <tr th:each="entry : ${dictionary}">
-        <td th:text="${entry.key}"></td>
-        <td th:text="${entry.value}"></td>
-    </tr>
+    <table>
+        <thead>
+        <tr>
+            <th>Выражение</th>
+            <th>Оценка</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${dictionary}">
+            <td th:text="${entry.key}">Выражение</td>
+            <td th:text="${entry.value}">Оценка</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 </body>

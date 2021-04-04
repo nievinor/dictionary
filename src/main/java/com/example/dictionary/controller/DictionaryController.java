@@ -29,8 +29,6 @@ public class DictionaryController {
     @PostMapping("dictionary_upload")
     public String readFile(Model model, @RequestParam("file") MultipartFile file) {
         BufferedReader br;
-//        List<String> result = new ArrayList<>();
-
         dictionary.clear();
 
         try {
@@ -40,17 +38,22 @@ public class DictionaryController {
             while ((line = br.readLine()) != null) {
                 dictionary.add(line);
             }
-            
-
+            model.addAttribute("message", "словарь загружен");
         } catch (IOException e) {
-//            System.err.println(e.getMessage());
+            model.addAttribute("message", "словарь не загружен");
         }
-
         return "greeting";
     }
 
     @PostMapping("/dictionary_search")
-    public String search(Model model, @RequestParam("search") String check) {
+    public String searchController(Model model, @RequestParam("search") String check) {
+
+        if (dictionary.size() == 0) {
+            model.addAttribute("message", "словарь не загружен");
+            return "greeting";
+        } else {
+            model.addAttribute("message", "словарь загружен");
+        }
 
         Map<Integer, Integer> markMap = new HashMap<>();
 
@@ -109,5 +112,9 @@ public class DictionaryController {
         
         return "greeting";
     }
+
+//    private Map<String, Integer> search() {
+//
+//    }
 
 }
