@@ -36,12 +36,18 @@ public class DictionaryController {
             InputStream is = file.getInputStream();
             br = new BufferedReader(new InputStreamReader(is));
             while ((line = br.readLine()) != null) {
-                dictionary.add(line);
+                dictionary.add(line.toLowerCase(Locale.ROOT));
             }
             model.addAttribute("message", "словарь загружен");
         } catch (IOException e) {
             model.addAttribute("message", "словарь не загружен");
         }
+
+        if (dictionary.size() == 0) {
+            model.addAttribute("message", "словарь не загружен");
+            return "greeting";
+        }
+
         return "greeting";
     }
 
@@ -56,7 +62,7 @@ public class DictionaryController {
         }
 
         //Map использую для передачи результата, где ключ это выражение, а значение - оценка
-        Map<String, Integer> result = search(check);
+        Map<String, Integer> result = search(check.toLowerCase(Locale.ROOT));
         model.addAttribute("dictionary", result);
         
         return "greeting";
